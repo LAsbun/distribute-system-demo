@@ -4,10 +4,8 @@ package github.LAsbun.lock;
  * Created by lasbun
  */
 
-import github.LAsbun.lock.redis.JedisLock;
 import lombok.extern.slf4j.Slf4j;
 
-import java.util.UUID;
 import java.util.concurrent.*;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -19,7 +17,7 @@ public class LocalLockTest {
     private static ReentrantLock lock = new ReentrantLock();
 
     public static void main(String[] args) {
-        ExecutorService executorService = new ThreadPoolExecutor(10, 10, 10, TimeUnit.SECONDS, new LinkedBlockingQueue<>());
+        ExecutorService executorService = new ThreadPoolExecutor(10, 10, 10, TimeUnit.SECONDS, new LinkedBlockingQueue<>(1024));
         CountDownLatch countDownLatch = new CountDownLatch(NUM);
         for (int i = 0; i < NUM; i++) {
             executorService.submit(new Runnable() {

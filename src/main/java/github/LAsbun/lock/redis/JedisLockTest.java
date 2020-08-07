@@ -4,7 +4,6 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.util.UUID;
 import java.util.concurrent.*;
-import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * Created by lasbun
@@ -13,24 +12,26 @@ import java.util.concurrent.locks.ReentrantLock;
 public class JedisLockTest {
     private static int inventory = 1001;
     private static final int NUM = 1000;
-    private static JedisLock jedisLock = new JedisLock();
+    private static final JedisLock jedisLock = new JedisLock();
 
     public static void main(String[] args) {
         ExecutorService executorService = new ThreadPoolExecutor(10, 10, 10, TimeUnit.SECONDS, new LinkedBlockingQueue<>());
         CountDownLatch countDownLatch = new CountDownLatch(NUM);
         for (int i = 0; i < NUM; i++) {
-            executorService.submit(new Runnable() {
-                @Override
-                public void run() {
-                    String uuid = UUID.randomUUID().toString();
+            executorService.submit(() -> {
+                String uuid = UUID.randomUUID().toString();
+
+                try {
                     boolean lock = jedisLock.lock(uuid);
-                    System.out.println("当前线程是:" + Thread.currentThread().getName() + " lock result " + lock);
-//                    log.info("[{}] 当前inventory start:{}", Thread.currentThread().getName(), inventory);
+                    log.info("当前线程是:" + Thread.currentThread().getName() + " lock result " + lock);
+                    log.info("[{}] 当前inventory start:{}", Thread.currentThread().getName(), inventory);
                     inventory--;
-//                    log.info("[{}] 当前inventory end:{}", Thread.currentThread().getName(), inventory);
+                    log.info("[{}] 当前inventory end:{}", Thread.currentThread().getName(), inventory);
                     countDownLatch.countDown();
                     jedisLock.unlock(uuid);
                     log.info("[{}] end", uuid);
+                } catch (Exception e) {
+
                 }
             });
         }
@@ -42,7 +43,6 @@ public class JedisLockTest {
             e.printStackTrace();
         }
 
-        jedisLock.close();
-        System.out.println("当前存量 " + inventory);
+        log.info("当前存量 " + inventory);
     }
 }
