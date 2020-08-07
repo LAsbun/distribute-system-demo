@@ -1,4 +1,4 @@
-package github.LAsbun.lock;
+package github.lasbun.lock;
 
 /**
  * Created by lasbun

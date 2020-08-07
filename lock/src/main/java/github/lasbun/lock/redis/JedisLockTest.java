@@ -1,4 +1,4 @@
-package github.LAsbun.lock.redis;
+package github.lasbun.lock.redis;
 
 import lombok.extern.slf4j.Slf4j;
 

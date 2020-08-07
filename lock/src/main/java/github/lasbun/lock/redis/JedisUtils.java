@@ -1,4 +1,4 @@
-package github.LAsbun.lock.redis;
+package github.lasbun.lock.redis;
 
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
